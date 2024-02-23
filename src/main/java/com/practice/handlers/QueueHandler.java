@@ -11,12 +11,20 @@ public class QueueHandler implements Runnable {
 
     private ConcurrentLinkedQueue<Event> queue;
 
-    public QueueHandler(Queue<Event> queue) {
+    private HandlerFactory handlerFactory;
+
+    public QueueHandler(Queue<Event> queue, HandlerFactory handlerFactory) {
         this.queue = (ConcurrentLinkedQueue<Event>) queue;
+        this.handlerFactory = handlerFactory;
     }
 
     public Event getEvent() {
         return queue.poll();
+    }
+
+    private void callHandler(Event event) {
+        Handler handler = handlerFactory.getHandler(event);
+        handler.handle(event);
     }
 
     @Override
@@ -25,7 +33,7 @@ public class QueueHandler implements Runnable {
         while (true) {
             Event event = getEvent();
             if (event != null) {
-                event.execute();
+                callHandler(event);
             } else {
                 try {
                     Thread.sleep(1000);

@@ -1,10 +1,12 @@
 package com.practice.controllers;
 
-import com.practice.events.impl.MailEvent;
+import com.practice.domain.requests.EventRequest;
+import com.practice.events.Event;
 import com.practice.services.QueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -13,11 +15,15 @@ public class QueueController {
 
     private final QueueService queueService;
 
-    @GetMapping("/addQueue")
-    public ResponseEntity<String> addQueue() {
-        for (int i = 0; i < 10; i++) {
-            queueService.addEvent(new MailEvent("event" + i));
+    @PostMapping("/addQueue")
+    public ResponseEntity<String> addQueue(@RequestBody EventRequest eventRequest) {
+
+        Event event = eventRequest.getEvent();
+        if (event == null) {
+            return ResponseEntity.badRequest().body("Event cannot be null.");
         }
+
+        queueService.addEvent(event);
         return ResponseEntity.ok("Events successfully added to the queue.");
     }
 }

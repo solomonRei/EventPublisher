@@ -3,6 +3,7 @@ package com.practice.services;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutorService;
@@ -29,18 +30,11 @@ public class ListenerService {
         executorService.submit(this::processEvents);
     }
 
+    @Scheduled(fixedRate = 100)
     private void processEvents() {
-        while (true) {
-            if (!queueService.getQueue().isEmpty()) {
-                log.info("Processing event");
-                threadService.startManager(5);
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
+        if (!queueService.getQueue().isEmpty()) {
+            log.info("Processing event");
+            threadService.startManager(5);
         }
     }
 }
