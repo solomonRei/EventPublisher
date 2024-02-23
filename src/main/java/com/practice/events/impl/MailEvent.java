@@ -1,17 +1,19 @@
 package com.practice.events.impl;
 
 import com.practice.events.Event;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class MailEvent implements Event {
 
-    private final String message;
+    private String message;
 
-    public MailEvent(String message) {
-        this.message = message;
-    }
+    private String subject;
 
-    @Override
-    public void execute() {
-        System.out.println("Mail event executed" + message);
-    }
+    private String to;
+
+    private String from;
+
 }

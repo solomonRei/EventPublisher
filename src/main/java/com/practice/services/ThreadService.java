@@ -1,5 +1,6 @@
 package com.practice.services;
 
+import com.practice.handlers.HandlerFactory;
 import com.practice.handlers.QueueHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ public class ThreadService {
 
     private final QueueService queueService;
 
+    private final HandlerFactory handlerFactory;
+
     public void startManager(int nbOfThreads) {
 
         List<Thread> threads = new ArrayList<>(nbOfThreads);
@@ -22,7 +25,7 @@ public class ThreadService {
         var queue = queueService.getQueue();
 
         for (int i = 0; i < nbOfThreads; i++) {
-            threads.add(new Thread(new QueueHandler(queue), "#" + (i + 1)));
+            threads.add(new Thread(new QueueHandler(queue, handlerFactory), "#" + (i + 1)));
             threads.get(i).start();
         }
 
